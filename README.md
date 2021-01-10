@@ -16,5 +16,5 @@
 # App functionality
 -Login\
 -Logout\
--Show USers/Group list\
+-Show users/Group list\
 -Chating within multiple users
