@@ -10,11 +10,13 @@ export const ChatItem = (props) => {
   const textContainerExtra = isMyMessage
     ? styles.textContainerRight
     : styles.textContainerLeft;
+  const innerText = isMyMessage ? styles.rightText : styles.leftText;
   return (
     <View style={styles.messageContainer}>
       <View style={[styles.textContainer, textContainerExtra]}>
-        <Text style={styles.sender}>{message.authorUsername}</Text>
-        <Text style={styles.message}>{message.text}</Text>
+        <Text style={[styles.sender, innerText]}>{message.authorUsername}</Text>
+        <Text style={[styles.message, innerText]}>{message.text}</Text>
+        <Text style={[{marginTop: 10}, innerText]}>{message.timestamp}</Text>
       </View>
     </View>
   );
@@ -51,5 +53,11 @@ const styles = StyleSheet.create({
   sender: {
     fontWeight: 'bold',
     paddingRight: 10,
+  },
+  leftText: {
+    color: 'white',
+  },
+  rightText: {
+    color: '#15C39A',
   },
 });

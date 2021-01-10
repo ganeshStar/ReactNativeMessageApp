@@ -5,14 +5,13 @@ import {
   StyleSheet,
   TextInput,
   FlatList,
-  Platform,
   Keyboard,
-  TouchableHighlight,
   KeyboardAvoidingView,
   TouchableOpacity,
   Image,
 } from 'react-native';
 import {ChatItem} from '../components/ChatItem';
+var randomSentence = require('random-sentence');
 
 const ChatScreen = ({navigation}) => {
   var data = [
@@ -20,32 +19,71 @@ const ChatScreen = ({navigation}) => {
       authorId: 1,
       authorUsername: 'Sam',
       text: 'Hello',
+      timestamp: getDateWithFormate(),
     },
     {
       authorId: 2,
       authorUsername: 'Denho',
-      text: 'Hello hi',
+      text: 'Hi..There',
+      timestamp: getDateWithFormate(),
     },
   ];
   const [text, setText] = useState('');
-  const [disabled, setdisabled] = useState(true);
   const [messages, setMessages] = useState(data);
   const messgeInputTextRef = useRef();
 
-  useEffect(() => {});
+  useEffect(() => {
+    setInterval(() => {
+      startConvertion();
+    }, 1000);
+    setInterval(() => {
+      startAnotherConvertion();
+    }, 900);
+  });
   const onTyping = (text) => {
     if (text && text.length > 0) {
       setText(text);
     }
   };
+  const startConvertion = () => {
+    var messageTempItem = messages;
+    var dummyItem = {
+      authorId: 2,
+      authorUsername: 'Denho',
+      text: randomSentence(),
+      timestamp: getDateWithFormate(),
+    };
+    messageTempItem.splice(0, 0, dummyItem);
+    setMessages(messageTempItem);
+  };
 
+  const startAnotherConvertion = () => {
+    var messageTempItem = messages;
+    var dummyItem = {
+      authorId: 3,
+      authorUsername: 'Smith',
+      text: randomSentence(),
+      timestamp: getDateWithFormate(),
+    };
+    messageTempItem.splice(0, 0, dummyItem);
+    setMessages(messageTempItem);
+  };
+
+  function getDateWithFormate() {
+    var d = new Date(),
+      dformat =
+        [d.getMonth() + 1, d.getDate(), d.getFullYear()].join('/') +
+        ' ' +
+        [d.getHours(), d.getMinutes(), d.getSeconds()].join(':');
+    return dformat;
+  }
   const onSendBtnPressed = () => {
-    //this.props.sendMessage(this.state.text, this.props.user);
     var tempMessages = messages;
     var msgObj = {
       authorId: 1,
-      authorUsername: 'sam',
+      authorUsername: 'Sam',
       text: text,
+      timestamp: getDateWithFormate(),
     };
     tempMessages.splice(0, 0, msgObj);
     setMessages(tempMessages);
@@ -59,6 +97,7 @@ const ChatScreen = ({navigation}) => {
       <FlatList
         inverted
         data={messages}
+        extraData={messages}
         renderItem={(item) => renderChatItem(item)}
         keyExtractor={keyExtractor}
       />

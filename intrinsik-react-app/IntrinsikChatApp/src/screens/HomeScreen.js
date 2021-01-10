@@ -3,13 +3,16 @@ import {useState} from 'react';
 import {useEffect} from 'react';
 import {TouchableOpacity, FlatList, View, Text, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
-import {getChatUserItems} from '../actions/chat';
+import {getChatUserItems, getMessageItems} from '../actions/chat';
 import {BusyLoader} from '../components/busyLoader';
 import {getUserAsyncStorage} from '../services/getAuthAsyncStorage';
 import {navigate} from '../services/navRef';
 import {Avatar} from 'react-native-elements';
+var randomSentence = require('random-sentence');
+
 const HomeScreen = ({navigation}) => {
   const [chatListItems, setChatListItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const chat = useSelector((state) => state.chat);
   const dispatch = useDispatch();
   const load = async () => {
@@ -21,22 +24,38 @@ const HomeScreen = ({navigation}) => {
         tempArray.push({
           key: 'key_' + index,
           userGroupName: element,
-          newLastMessage: 'test',
+          newLastMessage: '',
           avatarURL: 'https://picsum.photos/40/40?random=' + i,
         });
         i++;
       });
       setChatListItems(tempArray);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  };
+
+  const getNewMessages = () => {
+    if (chatListItems.length > 0) {
+      var updateTempArray = chatListItems;
+      updateTempArray.forEach((element, index) => {
+        element.newLastMessage = randomSentence();
+      });
+      setChatListItems(updateTempArray);
     }
   };
 
   useEffect(() => {
+    setIsLoading(true);
     dispatch(getChatUserItems());
     load();
+    setInterval(() => {
+      getNewMessages();
+    }, 200);
   }, [dispatch]);
 
   const listItemHandler = () => {
-    //alert('xx');
     navigation.navigate('Chat');
   };
 
@@ -71,7 +90,7 @@ const HomeScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <BusyLoader loading={chat.isloading}></BusyLoader>
+      <BusyLoader loading={isLoading}></BusyLoader>
       <FlatList
         data={chatListItems}
         renderItem={(item) => renderListItem(item)}
